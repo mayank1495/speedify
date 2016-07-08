@@ -65,18 +65,61 @@ QTime myTimer;
 int elpsd=0;
 int wordcnt=0;
 
+bool iswhitespace(QCharRef c)
+{
+  return ((c == ' ' || c == '\n' || c == '\t' || c == '\r') ? 1 : 0);
+}
+
+bool ispunctuation(QCharRef c)
+{
+  return ((c == '.' ||
+	   c == '!' ||
+	   c == ',' ||
+	   c == ':' ||
+	   c == ';' ||
+	   c == '?' ||
+	   c == '(' ||
+	   c == ')' ||
+	   c == '{' ||
+	   c == '}' ||
+	   c == '[' ||
+	   c == ']' ||
+	   c == '-' ||
+	   c == '^' ||
+	   c == '"' ||
+	   c == '`' ||
+	   c == '\'')? 1 : 0);
+}
+
 int MainWindow::checkWords()
 {
     int cnt=0;
+    bool flag;
     QString text=ui->enterText->toPlainText();
     QString text2=ui->fileText->toPlainText();
-    QStringList list=text.split(' ',QString::SkipEmptyParts);
-    QStringList list2=text2.split(' ',QString::SkipEmptyParts);
-    for(int i=0; i<list.count();i++)
-       if(i<list2.count())
-         if(list[i]==list2[i])
-             //if(!(list[i]==","||list[i]=="\""));
-               cnt++;
+    for (int i = 0; i < text.length() && i < text2.length(); )
+      if (text[i] == text2[i])
+	{
+	  flag = 1;
+	  while (!iswhitespace(text[i]) && !ispunctuation(text[i])
+		 && i < text.length() && i < text2.length())
+	    if (text[i] != text2[i])
+	      {
+		flag = 0;
+		break;
+	      }
+	    else
+	      ++i;
+	  if (!flag) break;
+	  cnt++;
+	  while ((iswhitespace(text[i]) || ispunctuation(text[i]))
+		 && i < text.length() && i < text2.length())
+	    if (text[i] != text2[i])
+	      break;
+	    else
+	      ++i;
+	}
+      else ++i;
     return cnt;
 }
 
@@ -84,7 +127,7 @@ void MainWindow::on_startBut_clicked()
 {
     myTimer.start();
     ui->stopBut->setEnabled(true);
-    ui->enterText->setReadOnly(false);
+    ui->enterText->setTextInteractionFlags(Qt::TextEditable);
 }
 
 void MainWindow::on_stopBut_clicked()
