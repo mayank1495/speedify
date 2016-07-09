@@ -110,7 +110,8 @@ int MainWindow::checkWords()
 	      }
 	    else
 	      ++i;
-	  if (!flag) break;
+	  if (!flag || (!iswhitespace(text2[i]) && text[i] != text2[i]))
+	    break;
 	  cnt++;
 	  while ((iswhitespace(text[i]) || ispunctuation(text[i]))
 		 && i < text.length() && i < text2.length())
@@ -119,7 +120,8 @@ int MainWindow::checkWords()
 	    else
 	      ++i;
 	}
-      else ++i;
+      else
+	break;
     return cnt;
 }
 
