@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+  ui->enterText->setLineWrapMode((QTextEdit::LineWrapMode)0);
+  ui->fileText->setLineWrapMode((QTextEdit::LineWrapMode)0);
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +22,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionOpen_triggered()
 {
-  QString fileName= QFileDialog::getOpenFileName(this,tr("Open File"),QString(),tr("Text Files (*.txt);;")); //;;C++ Files(*.cpp *.h)"));
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Open File"),
+						  QString(),
+						  tr("Text (*.txt);;"
+						     "CPP (*.cpp);;"
+						     "Log (*.log);;"
+						     "Shell (*.sh);;"
+						     "Python (*.py);;"
+						     "HTML (*.html);;"
+						     "Other Files (*)"));
   if(!fileName.isEmpty())
     {
       QFile file(fileName);
@@ -64,53 +75,53 @@ QTime myTimer;
 int elpsd=0;
 int wordcnt=0;
 
-bool iswhitespace(QCharRef c)
-{
-  return ((c == ' ' || c == '\n' || c == '\t' || c == '\r') ? 1 : 0);
-}
-
-bool ispunctuation(QCharRef c)
-{
-  return ((c == '.' ||
-	   c == '!' ||
-	   c == ',' ||
-	   c == ':' ||
-	   c == ';' ||
-	   c == '?' ||
-	   c == '(' ||
-	   c == ')' ||
-	   c == '{' ||
-	   c == '}' ||
-	   c == '[' ||
-	   c == ']' ||
-	   c == '-' ||
-	   c == '^')? 1 : 0);
-}
-
 int MainWindow::checkWords()
 {
   int cnt=0;
-  bool flag;
+  bool flag, f;
   QString text=ui->enterText->toPlainText();
   QString text2=ui->fileText->toPlainText();
   for (int i = 0; i < text.length() && i < text2.length(); )
     if (text[i] == text2[i])
       {
-	flag = 1;
-	while (i < text.length() && i < text2.length() &&
-	       !iswhitespace(text[i]) && !ispunctuation(text[i]))
-	  if (text[i] != text2[i])
-	    {
-	      flag = 0;
-	      break;
-	    }
-	  else
-	    ++i;
-	if (!flag || (!iswhitespace(text2[i]) && text[i] != text2[i]))
+	flag = 1, f = 0;
+	if (text2[i].isLetter())
+	  while (i < text.length() && i < text2.length() && text2[i].isLetter())
+	    if (text[i] != text2[i])
+	      {
+		flag = 0;
+		break;
+	      }
+	    else
+	      {
+		++i;
+		if (text2[i] == '\'' || text2[i] == '`')
+		  {
+		    if (f)
+		      {
+			++cnt;
+			break;
+		      }
+		    f = 1;
+		    ++i;
+		    if (!text2[i].isLetter())
+		      break;
+		  }
+	      }
+	else if (text2[i].isDigit())
+	  while (i < text.length() && i < text2.length() && text2[i].isDigit())
+	    if (text[i] != text2[i])
+	      {
+		flag = 0;
+		break;
+	      }
+	    else
+	      ++i;
+	if (!flag)
 	  break;
 	cnt++;
-	while ((iswhitespace(text[i]) || ispunctuation(text[i]))
-	       && i < text.length() && i < text2.length())
+	while (i < text.length() && i < text2.length() &&
+	       !(text2[i].isDigit() || text2[i].isLetter()))
 	  if (text[i] != text2[i])
 	    break;
 	  else
