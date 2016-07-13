@@ -26,8 +26,6 @@ private slots:
 
     void on_stopBut_clicked();
 
-    void on_resetBut_clicked();
-
     void on_actionExit_triggered();
 
 private:

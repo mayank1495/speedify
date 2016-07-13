@@ -7,34 +7,33 @@
 #include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+  QMainWindow(parent),
+  ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+  delete ui;
 }
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fileName= QFileDialog::getOpenFileName(this,tr("Open File"),QString(),tr("Text Files (*.txt);;")); //;;C++ Files(*.cpp *.h)"));
-    if(!fileName.isEmpty())
+  QString fileName= QFileDialog::getOpenFileName(this,tr("Open File"),QString(),tr("Text Files (*.txt);;")); //;;C++ Files(*.cpp *.h)"));
+  if(!fileName.isEmpty())
     {
-        QFile file(fileName);
-        if(!file.open(QIODevice::ReadOnly))
+      QFile file(fileName);
+      if(!file.open(QIODevice::ReadOnly))
         {
-            QMessageBox::critical(this,tr("Error"),tr("Could not open file."));
-            return;
+	  QMessageBox::critical(this,tr("Error"),tr("Could not open file."));
+	  return;
         }
-        ui->fileText->clear();
-        QTextStream in(&file);
-        ui->fileText->setText(in.readAll());
-        ui->startBut->setEnabled(true);
-        ui->resetBut->setEnabled(true);
-        file.close();
+      ui->fileText->clear();
+      QTextStream in(&file);
+      ui->fileText->setText(in.readAll());
+      ui->startBut->setEnabled(true);
+      file.close();
     }
 }
 
@@ -85,96 +84,75 @@ bool ispunctuation(QCharRef c)
 	   c == '[' ||
 	   c == ']' ||
 	   c == '-' ||
-	   c == '^' ||
-	   c == '"' ||
-	   c == '`' ||
-	   c == '\'')? 1 : 0);
+	   c == '^')? 1 : 0);
 }
 
 int MainWindow::checkWords()
 {
-    int cnt=0;
-    bool flag;
-    QString text=ui->enterText->toPlainText();
-    QString text2=ui->fileText->toPlainText();
-    for (int i = 0; i < text.length() && i < text2.length(); )
-      if (text[i] == text2[i])
-	{
-	  flag = 1;
-	  while (!iswhitespace(text[i]) && !ispunctuation(text[i])
-		 && i < text.length() && i < text2.length())
-	    if (text[i] != text2[i])
-	      {
-		flag = 0;
-		break;
-	      }
-	    else
-	      ++i;
-	  if (!flag || (!iswhitespace(text2[i]) && text[i] != text2[i]))
-	    break;
-	  cnt++;
-	  while ((iswhitespace(text[i]) || ispunctuation(text[i]))
-		 && i < text.length() && i < text2.length())
-	    if (text[i] != text2[i])
+  int cnt=0;
+  bool flag;
+  QString text=ui->enterText->toPlainText();
+  QString text2=ui->fileText->toPlainText();
+  for (int i = 0; i < text.length() && i < text2.length(); )
+    if (text[i] == text2[i])
+      {
+	flag = 1;
+	while (i < text.length() && i < text2.length() &&
+	       !iswhitespace(text[i]) && !ispunctuation(text[i]))
+	  if (text[i] != text2[i])
+	    {
+	      flag = 0;
 	      break;
-	    else
-	      ++i;
-	}
-      else
-	break;
-    return cnt;
+	    }
+	  else
+	    ++i;
+	if (!flag || (!iswhitespace(text2[i]) && text[i] != text2[i]))
+	  break;
+	cnt++;
+	while ((iswhitespace(text[i]) || ispunctuation(text[i]))
+	       && i < text.length() && i < text2.length())
+	  if (text[i] != text2[i])
+	    break;
+	  else
+	    ++i;
+      }
+    else
+      break;
+  return cnt;
 }
 
 void MainWindow::on_startBut_clicked()
 {
-    myTimer.start();
-    ui->stopBut->setEnabled(true);
-    ui->enterText->setTextInteractionFlags(Qt::TextEditable);
+  myTimer.start();
+  ui->enterText->clear();
+  ui->resultText->clear();
+  ui->resultText->clear();
+  ui->enterText->setTextInteractionFlags(Qt::TextEditable);
+  ui->stopBut->setEnabled(true);
+  elpsd=0;
+  wordcnt=0;
 }
 
 void MainWindow::on_stopBut_clicked()
 {
-    elpsd=myTimer.elapsed();
-    elpsd/=1000;
-    if(elpsd>=60)
-        elpsd/=60;
-    ui->enterText->setReadOnly(true);
-    ui->startBut->setEnabled(false);
-    ui->stopBut->setEnabled(false);
-    //ui->resultText->setText(QString::number(elpsd));
-//    QString text=ui->enterText->toPlainText();
-//    QString text2=ui->fileText->toPlainText();
-//    QStringList list=text.split(' ',QString::SkipEmptyParts);
-//    QStringList list2=text2.split(' ',QString::SkipEmptyParts);
-//    for(int i=0; i<list.size();i++)
-//        if(list[i]==list2[i])
-//            wordcnt++;
-    //wordcnt=checkWords();
-    int cnt=checkWords();
-    wordcnt=cnt/elpsd;
-    QString s= QString::number(wordcnt);
-    QString s2=QString::number(cnt);
-    if (wordcnt<1)
+  elpsd = myTimer.elapsed();
+  elpsd /= 1000;
+  if(elpsd >= 60)
+    elpsd /= 60;
+  ui->stopBut->setDisabled(true);
+  int cnt = checkWords();
+  wordcnt = cnt/elpsd;
+  QString s  = QString::number(wordcnt);
+  QString s2 = QString::number(cnt);
+  if (wordcnt < 1)
     {
-        ui->resultText->setText(s2+" words in\n "+QString::number(elpsd)+" seconds.");
+      ui->resultText->setText(s2+" words in\n "+QString::number(elpsd)+" seconds.");
     }
-    else
-     ui->resultText->setText(s+" words per min.");
-}
-
-void MainWindow::on_resetBut_clicked()
-{
-    ui->enterText->clear();
-    ui->resultText->clear();
-    ui->resultText->clear();
-    ui->stopBut->setDisabled(true);
-    ui->startBut->setDisabled(false);
-    ui->enterText->setReadOnly(true);
-    elpsd=0;
-    wordcnt=0;
+  else
+    ui->resultText->setText(s+" words per min.");
 }
 
 void MainWindow::on_actionExit_triggered()
 {
-    qApp->quit();
+  qApp->quit();
 }
