@@ -4,3 +4,4 @@
 moc_*.cpp
 ui_*.h
 speedify
+Makefile
