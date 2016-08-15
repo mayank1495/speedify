@@ -13,6 +13,12 @@
     <height>559</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string notr="true">SPEED TEST</string>
   </property>
@@ -52,7 +58,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="label1">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -72,7 +78,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="label2">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -292,12 +298,12 @@
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>299</x>
-     <y>582</y>
+     <x>309</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
-     <x>299</x>
-     <y>534</y>
+     <x>310</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>

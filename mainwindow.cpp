@@ -11,6 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->enterText->setHidden(true);
+    ui->fileText->setHidden(true);
+    ui->label1->setHidden(true);
+    ui->label2->setHidden(true);
+    ui->startBut->setHidden(true);
+    ui->stopBut->setHidden(true);
 	ui->enterText->setLineWrapMode((QTextEdit::LineWrapMode)0);
 	ui->fileText->setLineWrapMode((QTextEdit::LineWrapMode)0);
 }
@@ -123,6 +129,12 @@ void MainWindow::on_openBut_clicked()
 			ui->fileText->setText(in.readAll());
 			ui->startBut->setEnabled(true);
 			file.close();
+            ui->enterText->setVisible(true);
+            ui->fileText->setVisible(true);
+            ui->label1->setVisible(true);
+            ui->label2->setVisible(true);
+            ui->startBut->setVisible(true);
+            ui->stopBut->setVisible(true);
 			ui->startBut->setFocus();
 			ui->messageText->setText("Click on Start");
 		}
@@ -136,7 +148,7 @@ void MainWindow::on_openBut_clicked()
 void MainWindow::on_startBut_clicked()
 {
 	myTimer.start();
-	ui->enterText->clear();
+    ui->enterText->clear();
 	ui->messageText->setText("Start typing<br>"
 							 "Click Stop when finshed typing");
 	ui->enterText->setTextInteractionFlags(Qt::TextEditable);
