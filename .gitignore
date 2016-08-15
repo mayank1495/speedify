@@ -1,6 +1,7 @@
 *.o
 *.a
 *.so
+*.user
 moc_*.cpp
 ui_*.h
 speedify

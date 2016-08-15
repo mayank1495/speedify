@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 	ui->enterText->setLineWrapMode((QTextEdit::LineWrapMode)0);
 	ui->fileText->setLineWrapMode((QTextEdit::LineWrapMode)0);
 }
@@ -123,6 +123,7 @@ void MainWindow::on_openBut_clicked()
 			ui->fileText->setText(in.readAll());
 			ui->startBut->setEnabled(true);
 			file.close();
+			ui->startBut->setFocus();
 			ui->messageText->setText("Click on Start");
 		}
 		else
@@ -150,7 +151,9 @@ void MainWindow::on_stopBut_clicked()
 	elpsd /= 1000;
 	if(elpsd >= 60)
 		elpsd /= 60;
-	ui->stopBut->setDisabled(true);
+    ui->stopBut->setDisabled(true);
+    ui->enterText->setReadOnly(true);
+    ui->startBut->setFocus();
 	int cnt = checkWords();
 	wordcnt = cnt/elpsd;
 	QString s  = QString::number(wordcnt);
