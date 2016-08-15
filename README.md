@@ -8,8 +8,6 @@ Or you are good to go with correctly configured Qt Creator.
 ## Compile and Run
 - \*nix Terminals:
 
-.. code-block:: console
-
     qmake -project
     qmake
     make
