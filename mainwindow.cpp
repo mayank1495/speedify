@@ -160,20 +160,18 @@ void MainWindow::on_startBut_clicked()
 void MainWindow::on_stopBut_clicked()
 {
 	elpsd = myTimer.elapsed();
-	elpsd /= 1000;
-	if(elpsd >= 60)
-		elpsd /= 60;
+    elpsd /= 1000;
     ui->stopBut->setDisabled(true);
     ui->enterText->setReadOnly(true);
     ui->startBut->setFocus();
-	int cnt = checkWords();
-	wordcnt = cnt/elpsd;
-	QString s  = QString::number(wordcnt);
-	QString s2 = QString::number(cnt);
-	if (wordcnt < 1)
-		ui->messageText->setText(s2+" words in "+QString::number(elpsd)+" seconds.");
-	else
-		ui->messageText->setText(s+" words per min.");
+    int cnt = checkWords();
+    if (cnt)
+        ui->messageText->setText("You wrote at the rate of\n" + QString::number(60.0 * cnt / elpsd)+" words per minute");
+    else
+        if (elpsd)
+            ui->messageText->setText("You did not write since " + QString::number(elpsd) + (elpsd > 1 ? " seconds" : " second"));
+        else
+            ui->messageText->setText("Better test your typing speed");
 }
 
 void MainWindow::on_actionExit_triggered()
