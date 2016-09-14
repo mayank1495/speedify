@@ -1,0 +1,4 @@
+C++ indentation style: Stroustrup
+Indentation width: 1 tab
+Tab width: 4 spaces
+Line ending: Unix
